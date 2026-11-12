@@ -7,13 +7,13 @@ class Inventory:
         self.__products: list[Product] = []
 
     #Add new product
-    def add_product(self, product):
+    def add_product(self, product: Product):
         self.check_new_id(product.product_id)
         self.check_new_name(product.name)
         self.__products.append(product)
 
     #Remove a product by ID
-    def remove_product(self, product_id):
+    def remove_product(self, product_id: str):
         product = self.find_product(product_id)
         if product is None:
             raise ValueError("Product Not Found")
@@ -21,14 +21,14 @@ class Inventory:
         return product
 
     #Check that a product ID is not already in use
-    def check_new_id(self, product_id):
+    def check_new_id(self, product_id: str):
         product_id = product_id.strip().upper()
         if any(p.product_id == product_id for p in self.__products):
             raise ValueError("Product ID already exists. Please enter a unique ID.")
         return product_id
 
     #Check that a product name is not empty and not already in use
-    def check_new_name(self, name):
+    def check_new_name(self, name: str):
         name = name.strip()
         if not name:
             raise ValueError("Name cannot be empty.")
@@ -37,7 +37,7 @@ class Inventory:
         return name
 
     #Search for product by id
-    def find_product(self, product_id):
+    def find_product(self, product_id: str):
         product_id = product_id.strip().upper()
         product = next((p for p in self.__products if p.product_id == product_id), None)
         if product is None:
@@ -46,16 +46,16 @@ class Inventory:
         return product
 
     #Search for product by name (case-insensitive)
-    def find_by_name(self, name):           
+    def find_by_name(self, name: str):           
         name = name.strip().lower()
         return next((p for p in self.__products if p.name.lower() == name), None)
 
     #Update the stock of an existing product
-    def update_stock(self, product_id, quantity):
+    def update_stock(self, product_id: str, quantity: int):
         self.search_product(product_id).update_stock(quantity)
 
     #Show a single product, found by ID
-    def display_product(self, product_id):
+    def display_product(self, product_id: str):
         product = self.search_product(product_id)
         print("\nProduct Found")
         print("-------------------------------------------")
