@@ -1,15 +1,24 @@
 #Inventory class
+from product import Product
 
 class Inventory:
 
     def __init__(self):
-        self.__products = []
+        self.__products: list[Product] = []
 
     #Add new product
     def add_product(self, product):
         self.check_new_id(product.product_id)
         self.check_new_name(product.name)
         self.__products.append(product)
+
+    #Remove a product by ID
+    def remove_product(self, product_id):
+        product = self.find_product(product_id)
+        if product is None:
+            raise ValueError("Product Not Found")
+        self.__products.remove(product)
+        return product
 
     #Check that a product ID is not already in use
     def check_new_id(self, product_id):
@@ -28,11 +37,12 @@ class Inventory:
         return name
 
     #Search for product by id
-    def search_product(self, product_id):
+    def find_product(self, product_id):
         product_id = product_id.strip().upper()
         product = next((p for p in self.__products if p.product_id == product_id), None)
         if product is None:
-            raise ValueError("Product Not Found")
+            return None
+            #raise ValueError("Product Not Found")
         return product
 
     #Search for product by name (case-insensitive)

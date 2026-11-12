@@ -117,7 +117,7 @@ def prompt_new_product(inventory):
 #Prompt for an existing product ID and return it
 def prompt_existing_id(inventory):
     pid = prompt_until_valid("Enter Product ID: ", parse_id)
-    inventory.search_product(pid)
+    inventory.find_product(pid)
     return pid
 
 #print menu options
