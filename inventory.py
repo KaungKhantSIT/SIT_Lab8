@@ -41,8 +41,7 @@ class Inventory:
         product_id = product_id.strip().upper()
         product = next((p for p in self.__products if p.product_id == product_id), None)
         if product is None:
-            return None
-            #raise ValueError("Product Not Found")
+            raise ValueError("Product Not Found")
         return product
 
     #Search for product by name (case-insensitive)
