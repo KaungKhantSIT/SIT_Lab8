@@ -4,11 +4,11 @@ import json
 import math
 import re
 
-from product import PRODUCT_TYPES, PhysicalProduct, DigitalProduct
+from product import PRODUCT_TYPES, Product, PhysicalProduct, DigitalProduct
 from inventory import Inventory
 
 #Convert text to a non-negative int
-def parse_qty(raw):
+def parse_qty(raw: str) -> int:
     try:
         qty = int(raw)
     except ValueError:
@@ -18,14 +18,14 @@ def parse_qty(raw):
     return qty
 
 #Check product ID format
-def parse_id(raw,format=re.compile(r"P[0-9]{3,}")):
+def parse_id(raw: str, format: re.Pattern[str] = re.compile(r"P[0-9]{3,}")) -> str:
     pid = raw.upper()
     if not format.fullmatch(pid):
         raise ValueError("Please enter a valid product ID (e.g. P001).")
     return pid
 
 #Convert text to a float above 0 (used for price, weight and download size)
-def parse_positive(raw, decimals=None):
+def parse_positive(raw: str, decimals: int | None = None) -> float:
     try:
         value = float(raw)
     except ValueError:
@@ -39,14 +39,14 @@ def parse_positive(raw, decimals=None):
     return value
 
 #Parse product type user input into corresponding class (PhysicalProduct or DigitalProduct)
-def parse_type(raw):
+def parse_type(raw: str) -> type[Product]:
     product_class = PRODUCT_TYPES.get(raw.capitalize())
     if product_class is None:
         raise ValueError(f"Please enter one of: {', '.join(PRODUCT_TYPES).lower()}.")
     return product_class
 
 #Prompt until input is validated using required parse function
-def prompt_until_valid(prompt, parse):
+def prompt_until_valid(prompt: str, parse):
     while True:
         raw = input(prompt).strip()
         try:
@@ -55,7 +55,7 @@ def prompt_until_valid(prompt, parse):
             print(err)
 
 #Load inventory from json file
-def load_inventory(filename):
+def load_inventory(filename: str) -> Inventory:
     inventory = Inventory()
     try:
         with open(filename, 'r') as file:
@@ -80,7 +80,7 @@ def load_inventory(filename):
     return inventory
 
 #Save inventory to json file
-def save_inventory(filename, inventory):
+def save_inventory(filename: str, inventory: Inventory) -> None:
     print("\nSaving inventory...")
     try:
         with open(filename, 'w') as file:
@@ -90,7 +90,7 @@ def save_inventory(filename, inventory):
         print(f"Could not save inventory: {err}")
     
 #Ask the user for a new product's details and return the product object
-def prompt_new_product(inventory):
+def prompt_new_product(inventory: Inventory) -> Product:
 
     print("\nAdd New Product")
 
@@ -115,14 +115,14 @@ def prompt_new_product(inventory):
     return DigitalProduct(pid, name, price, stock, file_size)
 
 #Prompt for an existing product ID and return it
-def prompt_existing_id(inventory):
+def prompt_existing_id(inventory: Inventory) -> str:
     pid = prompt_until_valid("Enter Product ID: ", parse_id)
     if inventory.find_product(pid) is None:
         raise ValueError("Product Not Found")
     return pid
 
 #print menu options
-def menu_page(menu):
+def menu_page(menu: dict[str, tuple]) -> str:
     print("---------MENU---------")
     for i, option in enumerate(menu.keys(), start=1):
         print(f"{i}. {option}")
@@ -135,7 +135,7 @@ def menu_page(menu):
             print("Invalid option. Please select a valid option.")
 
 #Manager main program function
-def manager():
+def manager() -> None:
     file = "inventory.json"
     #Title
     print("============================")
