@@ -2,15 +2,17 @@
 import math
 from abc import ABC, abstractmethod
 from shipping import CanBeShipped
+from supplier import Supplier
 
 #Parent Product Class
 class Product(ABC):
 
-    def __init__(self, product_id, name, price, stock):
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier):
         self.__product_id = str(product_id).strip().upper()
         self.__name = str(name).strip()
         self.__price = self.__validate_price(price)
         self.__stock = self.__validate_stock(stock)
+        self.__supplier: Supplier = supplier
         if not self.__product_id:
             raise ValueError("Product ID cannot be empty.")
         if not self.__name:
@@ -51,12 +53,17 @@ class Product(ABC):
     def stock(self):
         return self.__stock
 
+    @property
+    def supplier(self) -> Supplier:
+        return self.__supplier
+
     def update_stock(self, quantity):
         self.__stock = self.__validate_stock(quantity)
 
     def display_info(self):
         print(f"ID: {self.__product_id}|Name: {self.__name}|"
               f"Price: ${self.__price:.2f}|Stock: {self.__stock}")
+        self.__supplier.display_information()
 
     def to_dict(self):
         return {
@@ -81,8 +88,8 @@ class PhysicalProduct(Product, CanBeShipped):
     SHIPPING_BASE_FEE = 5.00
     SHIPPING_RATE_PER_KG = 2.50
 
-    def __init__(self, product_id, name, price, stock, weight):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, weight: float):
+        super().__init__(product_id, name, price, stock, supplier)
         self.__weight = self.__validate_weight(weight)
 
     @staticmethod
@@ -124,8 +131,8 @@ class PhysicalProduct(Product, CanBeShipped):
 #Digital Product Class (inherits from Product)
 class DigitalProduct(Product):
 
-    def __init__(self, product_id, name, price, stock, file_size):
-        super().__init__(product_id, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, file_size: float):
+        super().__init__(product_id, name, price, stock, supplier)
         self.__file_size = self.__validate_file_size(file_size)
 
     @staticmethod
