@@ -37,11 +37,9 @@ class Inventory:
         return name
 
     #Search for product by id
-    def find_product(self, product_id: str):
+    def find_product(self, product_id: str) -> Product | None:
         product_id = product_id.strip().upper()
         product = next((p for p in self.__products if p.product_id == product_id), None)
-        if product is None:
-            raise ValueError("Product Not Found")
         return product
 
     #Search for product by name (case-insensitive)
@@ -51,11 +49,16 @@ class Inventory:
 
     #Update the stock of an existing product
     def update_stock(self, product_id: str, quantity: int):
-        self.find_product(product_id).update_stock(quantity)
+        product = self.find_product(product_id)
+        if product is None:
+            raise ValueError("Product Not Found")
+        product.update_stock(quantity)
 
     #Show a single product, found by ID
     def display_product(self, product_id: str):
         product = self.find_product(product_id)
+        if product is None:
+            raise ValueError("Product Not Found")
         print("\nProduct Found")
         print("-------------------------------------------")
         product.display_info()
