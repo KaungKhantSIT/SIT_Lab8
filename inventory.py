@@ -52,11 +52,11 @@ class Inventory:
 
     #Update the stock of an existing product
     def update_stock(self, product_id: str, quantity: int):
-        self.search_product(product_id).update_stock(quantity)
+        self.find_product(product_id).update_stock(quantity)
 
     #Show a single product, found by ID
     def display_product(self, product_id: str):
-        product = self.search_product(product_id)
+        product = self.find_product(product_id)
         print("\nProduct Found")
         print("-------------------------------------------")
         product.display_info()
