@@ -17,7 +17,7 @@ class Order:
             if line.product.product_id == product_id:
                 self.order_lines.remove(line)
                 return
-            raise ValueError(f"No order line for product {product_id} in order {self.order_id}.")
+        raise ValueError(f"No order line for product {product_id} in order {self.order_id}.")
 
     def calculate_total(self) -> float:
         total = 0.0
