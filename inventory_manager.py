@@ -6,6 +6,7 @@ import re
 
 from product import PRODUCT_TYPES, Product, PhysicalProduct, DigitalProduct
 from inventory import Inventory
+from supplier import Supplier
 
 #Convert text to a non-negative int
 def parse_qty(raw: str) -> int:
@@ -23,6 +24,11 @@ def parse_id(raw: str, format: re.Pattern[str] = re.compile(r"P[0-9]{3,}")) -> s
     if not format.fullmatch(pid):
         raise ValueError("Please enter a valid product ID (e.g. P001).")
     return pid
+
+def parse_text(raw: str) -> str:
+    if not raw:
+        raise ValueError("This field cannot be empty.")
+    return raw
 
 #Convert text to a float above 0 (used for price, weight and download size)
 def parse_positive(raw: str, decimals: int | None = None) -> float:
@@ -104,15 +110,21 @@ def prompt_new_product(inventory: Inventory) -> Product:
     price = prompt_until_valid("Price($): ", lambda raw: parse_positive(raw, decimals=2))
     stock = prompt_until_valid("Stock Quantity: ", parse_qty)
 
+    #Prompt for supplier info
+    supplier_id = prompt_until_valid("Supplier ID: ", parse_text)
+    supplier_name = prompt_until_valid("Supplier Name: ", parse_text)
+    supplier_email = prompt_until_valid("Supplier Email: ", parse_text)
+    supplier = Supplier(supplier_id, supplier_name, supplier_email)
+
     #Choose product type, then ask for the extra attribute that type needs
     product_class = prompt_until_valid("Type (physical/digital): ", parse_type)
 
     if product_class is PhysicalProduct:
         weight = prompt_until_valid("Weight (kg): ", parse_positive)
-        return PhysicalProduct(pid, name, price, stock, weight)
+        return PhysicalProduct(pid, name, price, stock, supplier, weight)
     
     file_size = prompt_until_valid("Download Size (MB): ", parse_positive)
-    return DigitalProduct(pid, name, price, stock, file_size)
+    return DigitalProduct(pid, name, price, stock, supplier, file_size)
 
 #Prompt for an existing product ID and return it
 def prompt_existing_id(inventory: Inventory) -> str:

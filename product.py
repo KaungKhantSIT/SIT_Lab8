@@ -66,12 +66,13 @@ class Product(ABC):
               f"Price: ${self.__price:.2f}|Stock: {self.__stock}")
         self.__supplier.display_information()
 
-    def to_dict(self) -> dict[str, str | float | int]:
+    def to_dict(self) -> dict[str, str | float | int | dict[str, str]]:
         return {
             "ID": self.__product_id,
             "Name": self.__name,
             "Price": self.__price,
-            "Stock": self.__stock
+            "Stock": self.__stock,
+            "Supplier": self.__supplier.to_dict()
         }
 
     @classmethod
@@ -118,7 +119,7 @@ class PhysicalProduct(Product, CanBeShipped):
     def calculate_shipping_cost(self) -> float:
         return round(self.SHIPPING_BASE_FEE + self.__weight * self.SHIPPING_RATE_PER_KG, 2)
 
-    def to_dict(self) -> dict[str, str | float | int]:
+    def to_dict(self) -> dict[str, str | float | int | dict[str, str]]:
         data = super().to_dict()
         data["Type"] = "Physical"
         data["Weight"] = self.__weight
@@ -126,7 +127,7 @@ class PhysicalProduct(Product, CanBeShipped):
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "PhysicalProduct":
-        return cls(data["ID"], data["Name"], data["Price"], data["Stock"], data["Weight"])
+        return cls(data["ID"], data["Name"], data["Price"], data["Stock"], Supplier.from_dict(data.get("Supplier")), data["Weight"])
 
 
 #Digital Product Class (inherits from Product)
@@ -158,7 +159,7 @@ class DigitalProduct(Product):
     def get_fulfilment_info(self) -> str:
         return f"{self.name} is a digital product and is delivered digitally via download."
 
-    def to_dict(self) -> dict[str, str | float | int]:
+    def to_dict(self) -> dict[str, str | float | int | dict[str, str]]:
         data = super().to_dict()
         data["Type"] = "Digital"
         data["File Size"] = self.__file_size
@@ -166,7 +167,7 @@ class DigitalProduct(Product):
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "DigitalProduct":
-        return cls(data["ID"], data["Name"], data["Price"], data["Stock"], data["File Size"])
+        return cls(data["ID"], data["Name"], data["Price"], data["Stock"], Supplier.from_dict(data.get("Supplier")), data["File Size"])
 
 
 #Lookup Table
