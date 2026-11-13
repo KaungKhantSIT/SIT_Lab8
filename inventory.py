@@ -55,7 +55,7 @@ class Inventory:
         product.update_stock(quantity)
 
     #Show a single product, found by ID
-    def display_product(self, product_id: str) -> None:
+    def show_product_details(self, product_id: str) -> None:
         product = self.find_product(product_id)
         if product is None:
             raise ValueError("Product Not Found")

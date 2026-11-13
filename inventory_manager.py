@@ -154,7 +154,7 @@ def manager() -> None:
                 prompt_until_valid("New Stock Quantity: ", parse_qty)),
             "Stock updated successfully!"),
         "Search Product": (
-            lambda: inventory.display_product(prompt_until_valid("Enter Product ID: ", parse_id)), None),
+            lambda: inventory.show_product_details(prompt_until_valid("Enter Product ID: ", parse_id)), None),
         "Save Inventory": (
             lambda: save_inventory(file, inventory), None),
         "Exit": (None, None)
